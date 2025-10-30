@@ -12,7 +12,7 @@ vi.mock('../src/data-loader', () => ({
         defense_factor: 100,
       },
     },
-    formation: {
+    formations: {
       byId: new Map([
         [
           'crane_wing',
