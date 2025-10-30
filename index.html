@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SPARK SAGA</title>
+    <link rel="manifest" href="public/manifest.json" />
+    <meta name="theme-color" content="#0f172a" />
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body>
+    <div id="ui-container">
+      <header id="ui-header">
+        <h1>SPARK SAGA</h1>
+      </header>
+      <main id="ui-main">
+        <div id="title-scene">
+          <h1>Title Screen</h1>
+          <button id="new-game-button">New Game</button>
+        </div>
+        <div id="field-scene" hidden>
+          <canvas id="field-canvas" width="480" height="320"></canvas>
+        </div>
+        <div id="battle-scene" hidden>
+          <h1>Battle</h1>
+          <div id="battle-log-container"></div>
+        </div>
+        <div id="result-scene" hidden>
+          <h1>Result</h1>
+          <p>You won!</p>
+          <p>Experience Gained: <span id="exp-gained"></span></p>
+          <p>Gold Gained: <span id="gold-gained"></span></p>
+        </div>
+        <div id="menu-scene" class="overlay" hidden>
+          <div class="card">
+            <h1>Menu</h1>
+            <button id="formation-button">Formation</button>
+            <button id="close-menu-button">Close</button>
+          </div>
+        </div>
+        <div id="formation-scene" class="overlay" hidden>
+          <div class="card">
+            <h1>Formation</h1>
+            <!-- Party list will be dynamically generated here -->
+            <div id="party-list"></div>
+            <!-- Formation selection will be dynamically generated here -->
+            <div id="formation-selection"></div>
+            <!-- Stat preview will be dynamically generated here -->
+            <div id="stat-preview"></div>
+          </div>
+        </div>
+        <div id="conversation-overlay" class="overlay" hidden>
+          <div id="dialog-box" class="card">
+            <p id="dialog-text"></p>
+          </div>
+          <ul id="choice-list"></ul>
+        </div>
+      </main>
+      <footer id="ui-footer">
+        <div id="log-pane"></div>
+      </footer>
+      <div id="help-display"></div>
+      <div id="touch-controls" hidden>
+        <div id="d-pad">
+          <button id="d-pad-up">↑</button>
+          <button id="d-pad-left">←</button>
+          <button id="d-pad-right">→</button>
+          <button id="d-pad-down">↓</button>
+        </div>
+        <div id="action-buttons">
+          <button id="action-confirm">A</button>
+          <button id="action-cancel">B</button>
+          <button id="action-menu">M</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="loading-screen">
+      <h1>Loading...</h1>
+    </div>
+
+    <div id="error-screen" hidden>
+      <h1>Error</h1>
+      <p id="error-message"></p>
+      <button id="retry-button">Retry</button>
+    </div>
+
+    <div id="dev-diagnostics" hidden></div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
