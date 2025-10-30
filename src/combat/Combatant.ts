@@ -93,7 +93,7 @@ export class Combatant {
   }
 
   private get formationModifiers() {
-    const formation = gameData.formation.byId.get(this.formationId);
+    const formation = gameData.formations.byId.get(this.formationId);
     if (!formation) return null;
 
     const row = this.formationPosition === 'F' ? 'front' : 'back';

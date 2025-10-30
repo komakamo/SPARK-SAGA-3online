@@ -1,5 +1,6 @@
 // spark-saga-repo-starter/src/managers/ConversationManager.ts
-import { eventsSchema, Event, EventNode } from '../schemas/event';
+import { Event, EventNode } from '../schemas/event';
+import { gameData } from '../data-loader';
 
 // Mock game state for now
 const defaultGameState = {
@@ -18,39 +19,24 @@ export class ConversationManager {
   private gameState: any;
   private onStateChange: (() => void) | null = null;
 
-  private constructor(gameState: any = defaultGameState) {
+  constructor(gameState: any = defaultGameState) {
     this.gameState = gameState;
+    this.loadEvents();
   }
 
-  public static async initialize(gameState: any = defaultGameState) {
-    const manager = new ConversationManager(gameState);
-    await manager.loadEvents();
-    return manager;
-  }
-
-  private async loadEvents() {
-    try {
-      const response = await fetch('/data/event.json');
-      const data = await response.json();
-      const parsedEvents = eventsSchema.parse(data);
-      for (const event of parsedEvents) {
-        this.events.set(event.id, event);
-      }
-    } catch (error) {
-      console.error('Failed to load events:', error);
+  private loadEvents() {
+    for (const event of gameData.event.all) {
+      this.events.set(event.id, event);
     }
   }
 
-  public startConversation(eventId: string, onStateChange: () => void) {
+  public startConversation(eventId: string) {
     this.activeEvent = this.events.get(eventId) || null;
-    this.onStateChange = onStateChange;
     if (this.activeEvent) {
       this.currentNode = this.activeEvent.nodes[0];
       this.processNode(this.currentNode);
     }
-    if (this.onStateChange) {
-      this.onStateChange();
-    }
+    return this.currentNode;
   }
 
   public handleChoice(choiceIndex: number) {
@@ -88,43 +74,31 @@ export class ConversationManager {
       return;
     }
 
-    let shouldUpdateUI = true;
-
     switch (node.type) {
       case 'set_flag':
         this.flags.set(node.flag, node.value);
         this.goToNode(node.next);
-        shouldUpdateUI = false;
         break;
       case 'quest_start':
         this.gameState.quests.set(node.quest_id, 'started');
         this.goToNode(node.next);
-        shouldUpdateUI = false;
         break;
       case 'quest_update':
         this.gameState.quests.set(node.quest_id, node.quest_state);
         this.goToNode(node.next);
-        shouldUpdateUI = false;
         break;
       case 'reward':
         this.gameState.inventory[node.item_id] = (this.gameState.inventory[node.item_id] || 0) + node.quantity;
         this.goToNode(node.next);
-        shouldUpdateUI = false;
         break;
       case 'goto':
         this.goToNode(node.target);
-        shouldUpdateUI = false;
         break;
       case 'battle':
         // This would trigger a battle, but for now we'll just log it
         console.log(`Starting battle with encounter ${node.encounter_id}`);
         this.goToNode(node.on_win); // Assume the player wins
-        shouldUpdateUI = false;
         break;
-    }
-
-    if (shouldUpdateUI && this.onStateChange) {
-      this.onStateChange();
     }
   }
 
@@ -140,8 +114,5 @@ export class ConversationManager {
   private endConversation() {
     this.activeEvent = null;
     this.currentNode = null;
-    if (this.onStateChange) {
-      this.onStateChange();
-    }
   }
 }
