@@ -26,7 +26,7 @@
 
 ## event.json
 
-- Type: ZodObject
+- Type: ZodDiscriminatedUnion
 
 ## quest.json
 
@@ -41,6 +41,10 @@
 - Type: ZodObject
 
 ## loot_table.json
+
+- Type: ZodObject
+
+## status-effect.json
 
 - Type: ZodObject
 

@@ -20,4 +20,6 @@ export const statusEffectSchema = z.object({
   resistanceTags: z.array(z.string()),
 });
 
+export const statusEffectsSchema = z.array(statusEffectSchema);
+
 export type StatusEffect = z.infer<typeof statusEffectSchema>;

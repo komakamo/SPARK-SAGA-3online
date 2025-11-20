@@ -6,7 +6,9 @@ import path from 'path';
 // @ts-ignore
 global.fetch = vi.fn(async (url: string) => {
   const projectRoot = process.cwd();
-  const filePath = path.resolve(projectRoot, url);
+  // Map URL path to public directory
+  const relativePath = url.startsWith('/') ? url.slice(1) : url;
+  const filePath = path.resolve(projectRoot, 'public', relativePath);
 
   try {
     const fileContent = await fs.readFile(filePath, 'utf-8');

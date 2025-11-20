@@ -47,6 +47,7 @@ async function validateSchemas() {
     'shop.json': (await import('../src/schemas/shop')).shopsSchema,
     'faction.json': (await import('../src/schemas/faction')).factionsSchema,
     'loot_table.json': (await import('../src/schemas/loot_table')).lootTablesSchema,
+    'status_effect.json': (await import('../src/schemas/status-effect')).statusEffectsSchema,
     'balance.json': (await import('../src/schemas/balance')).balanceSchema,
     'er.json': (await import('../src/schemas/er')).erSchema,
     'i18n/ja.json': (await import('../src/schemas/i18n')).i18nSchema,
@@ -79,7 +80,7 @@ async function validateIdConventions() {
   const filesToValidate = [
     'skill.json', 'weapon.json', 'armor.json', 'item.json', 'enemy.json',
     'formation.json', 'event.json', 'quest.json', 'shop.json', 'faction.json',
-    'loot_table.json'
+    'loot_table.json', 'status_effect.json'
   ];
 
   let hasErrors = false;
@@ -164,7 +165,7 @@ async function validateReferentialIntegrity() {
 
   for (const event of events) {
     for (const node of event.nodes) {
-      if (!questIds.has(node.quest_id)) {
+      if (node.quest_id && !questIds.has(node.quest_id)) {
         console.error(`  - Invalid quest ID "${node.quest_id}" in event "${event.id}"`);
         hasErrors = true;
       }
@@ -306,7 +307,7 @@ async function validateI18n() {
 async function generateDocumentation() {
   console.log('Generating data model documentation...');
   const schemaFiles = [
-    'skill', 'weapon', 'armor', 'item', 'enemy', 'formation', 'event', 'quest', 'shop', 'faction', 'loot_table', 'balance', 'er', 'i18n'
+    'skill', 'weapon', 'armor', 'item', 'enemy', 'formation', 'event', 'quest', 'shop', 'faction', 'loot_table', 'status-effect', 'balance', 'er', 'i18n'
   ];
 
   let markdown = '# Data Model\n\n';
