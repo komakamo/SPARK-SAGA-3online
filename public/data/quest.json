@@ -1,0 +1,10 @@
+[
+  {
+    "id": "sample_quest",
+    "name": "Sample Quest",
+    "description": "A sample quest.",
+    "rewards": {
+      "items": []
+    }
+  }
+]
