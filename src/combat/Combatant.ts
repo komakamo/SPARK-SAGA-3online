@@ -113,7 +113,27 @@ export class Combatant {
   addStatusEffect(statusEffectDefinition: StatusEffectDefinition): void {
     // Resistance check
     const resistance = statusEffectDefinition.resistanceTags.reduce((acc, tag) => {
-      return acc + (this.resistances[tag as keyof Resistances] ?? 0);
+      const key = tag as keyof Resistances;
+      const value = this.resistances[key];
+
+      // If the tag is a standard resistance tag (ends in _resistance),
+      // use the value directly (Higher is better).
+      // Default is 0.0 (No resistance).
+      if (tag.endsWith('_resistance')) {
+        return acc + (value ?? 0);
+      }
+
+      // If the tag is a damage type (e.g. 'fire', 'slash'),
+      // the value is a Damage Multiplier (Lower is better).
+      // We convert it to Resistance Probability: 1.0 - Multiplier.
+      // Default multiplier is 1.0.
+      // 1.0 (Normal) -> 0.0 (No resistance).
+      // 0.0 (Immune) -> 1.0 (Full resistance).
+      // 2.0 (Weak)   -> -1.0 (Negative resistance).
+      else {
+        const multiplier = value ?? 1.0;
+        return acc + (1.0 - multiplier);
+      }
     }, 0);
 
     if (Math.random() < resistance) {

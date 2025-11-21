@@ -94,4 +94,46 @@ describe('ActiveStatusEffect', () => {
     combatant.addStatusEffect(poisonEffectDefinition);
     expect(combatant.statusEffects.length).toBe(0);
   });
+
+  it('should correctly handle damage type tags for resistance (inverted logic)', () => {
+    const burnEffect: StatusEffectDefinition = {
+      id: 'burn',
+      name: 'Burn',
+      duration: 3,
+      effects: [],
+      resistanceTags: ['fire'],
+    };
+
+    // Case 1: Immune to fire damage (0.0 multiplier)
+    // Should result in High status resistance (1.0 probability)
+    combatant.resistances.fire = 0.0;
+
+    // Mock Random to return 0.5
+    const originalRandom = Math.random;
+    Math.random = () => 0.5;
+
+    try {
+      combatant.addStatusEffect(burnEffect);
+      // Expected behavior: 0.5 < 1.0 (Resist Prob) -> Should Resist
+      // Current Bug: 0.5 < 0.0 (Multiplier) -> False -> Applies
+      expect(combatant.statusEffects.length).toBe(0);
+    } finally {
+      Math.random = originalRandom;
+    }
+
+    // Case 2: Weak to fire damage (2.0 multiplier)
+    // Should result in Low status resistance (-1.0 probability)
+    combatant.resistances.fire = 2.0;
+    combatant.statusEffects = []; // Clear effects
+
+    Math.random = () => 0.5;
+    try {
+      combatant.addStatusEffect(burnEffect);
+      // Expected behavior: 0.5 < -1.0 (Resist Prob) -> False -> Should Apply
+      // Current Bug: 0.5 < 2.0 (Multiplier) -> True -> Resists
+      expect(combatant.statusEffects.length).toBe(1);
+    } finally {
+      Math.random = originalRandom;
+    }
+  });
 });
