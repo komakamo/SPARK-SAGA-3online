@@ -91,6 +91,11 @@ export class Tilemap {
 
     const tileX = Math.floor(x / this.data.tileWidth);
     const tileY = Math.floor(y / this.data.tileHeight);
+
+    if (tileX < 0 || tileX >= this.data.width || tileY < 0 || tileY >= this.data.height) {
+      return true;
+    }
+
     const tileIndex = collisionLayer.data[tileY * this.data.width + tileX];
 
     return tileIndex !== 0;
